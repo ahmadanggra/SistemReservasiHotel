@@ -7,19 +7,9 @@ package com.sistemreservasihotel.ui;
 
 import java.awt.Point;
 import com.sistemreservasihotel.lib.*;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import java.awt.Toolkit;
 
 /**
  *
@@ -32,12 +22,11 @@ public class Menu extends javax.swing.JFrame {
      *
      * @param oldLocation
      */
-    public Menu(Point oldLocation) {
+    public Menu() {
         initComponents();
-        this.setLocation(oldLocation);
         initMember();
-        populateComponent();
     }
+
 
     private void initMember() {
         account = new Account();
@@ -47,86 +36,7 @@ public class Menu extends javax.swing.JFrame {
         
         // Bold all table Header
         bookingListTbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        paymentListTbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        roomListTbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        costumerListTbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        userListTbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-    }
-
-    private void populateComponent() {
-        // Check wheter user type Admin or User
-        if (account.getAccountType().equals("User")) {
-            hotelTabbedPane.remove(userManPnl);
-            hotelMenuBar.remove(managementMenu);
-        }
-
-        // Create popup menu for userListTbl and bookingListTbl
-        createPopupMenu();
-
-        // Populate list for booking, payment, costumer and room list
-        try {
-            bookingListTbl.setModel(booking.updateBookingList());
-            paymentListTbl.setModel(payment.updatePaymentList());
-            costumerListTbl.setModel(costumer.updateCostumerList());
-            roomListTbl.setModel(room.updateRoomList());
-            userListTbl.setModel(account.updateAccountList());
-        } catch (SQLException ex) {
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    private void createPopupMenu() {
-        // Enable delete data on bookingListTbl and userListTbl 
-        JPopupMenu popupMenuBooking = new JPopupMenu();
-        JPopupMenu popupMenuAccount = new JPopupMenu();
-        JMenuItem deleteBooking = new JMenuItem("Delete Booking");
-        JMenuItem deleteAccount = new JMenuItem("Delete User");
-        JMenuItem emptyPassword = new JMenuItem("Empty Password");
-        deleteBooking.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRowIndex = bookingListTbl.getSelectedRow();
-                if (selectedRowIndex != -1) {
-                    costumer.deleteCostumer(costumer.getCostumerID((String) bookingListTbl.getValueAt(selectedRowIndex, 2)));
-                    booking.deleteBooking(bookingListTbl.getValueAt(selectedRowIndex, 0).toString());
-                    bookingListTbl.setModel(booking.updateBookingList());
-                }
-            }
-        });
-        deleteAccount.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRowIndex = userListTbl.getSelectedRow();
-                if (selectedRowIndex != -1) {
-                    account.deleteAccount(userListTbl.getValueAt(selectedRowIndex, 0).toString());
-                    try {
-                        userListTbl.setModel(account.updateAccountList());
-                    } catch (SQLException ex) {
-                        Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });
-        emptyPassword.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRowIndex = userListTbl.getSelectedRow();
-                if (selectedRowIndex != -1) {
-                    account.emptyAccountPassword(userListTbl.getValueAt(selectedRowIndex, 0).toString());
-                    try {
-                        userListTbl.setModel(account.updateAccountList());
-                    } catch (SQLException ex) {
-                        Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });
-        popupMenuBooking.add(deleteBooking);
-        bookingListTbl.setComponentPopupMenu(popupMenuBooking);
-        popupMenuAccount.add(deleteAccount);
-        popupMenuAccount.add(emptyPassword);
-        userListTbl.setComponentPopupMenu(popupMenuAccount);
+        
     }
 
     /**
@@ -184,18 +94,6 @@ public class Menu extends javax.swing.JFrame {
         bookingListPnl = new javax.swing.JPanel();
         bookingListScroll = new javax.swing.JScrollPane();
         bookingListTbl = new javax.swing.JTable();
-        paymentListPnl = new javax.swing.JPanel();
-        paymentListScroll = new javax.swing.JScrollPane();
-        paymentListTbl = new javax.swing.JTable();
-        costumerListPnl = new javax.swing.JPanel();
-        costumerListScroll = new javax.swing.JScrollPane();
-        costumerListTbl = new javax.swing.JTable();
-        roomListPnl = new javax.swing.JPanel();
-        roomListScroll = new javax.swing.JScrollPane();
-        roomListTbl = new javax.swing.JTable();
-        userManPnl = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        userListTbl = new javax.swing.JTable();
         hotelMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         logoutMenuItem = new javax.swing.JMenuItem();
@@ -203,9 +101,6 @@ public class Menu extends javax.swing.JFrame {
         exitMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
         clearAllTextMenuItem = new javax.swing.JMenuItem();
-        managementMenu = new javax.swing.JMenu();
-        registerUserItem = new javax.swing.JMenuItem();
-        manageRoomItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -240,6 +135,11 @@ public class Menu extends javax.swing.JFrame {
         emailLbl.setText("Email:");
 
         jButton1.setText("Save");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -432,20 +332,8 @@ public class Menu extends javax.swing.JFrame {
         payDateLbl.setText("Payment Date:");
 
         paySaveBtn.setText("Save");
-        paySaveBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                paySaveBtnActionPerformed(evt);
-            }
-        });
 
         listBookingBtn.setText("List Booking");
-        listBookingBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                listBookingBtnActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/sistemreservasihotel/ext/hotel-icon.png"))); // NOI18N
 
         javax.swing.GroupLayout costImageViewerLayout = new javax.swing.GroupLayout(costImageViewer);
         costImageViewer.setLayout(costImageViewerLayout);
@@ -465,11 +353,6 @@ public class Menu extends javax.swing.JFrame {
         );
 
         calculatePaymentBtn.setText("Calculate");
-        calculatePaymentBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                calculatePaymentBtnActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout paymentFormLayout = new javax.swing.GroupLayout(paymentForm);
         paymentForm.setLayout(paymentFormLayout);
@@ -483,24 +366,21 @@ public class Menu extends javax.swing.JFrame {
                     .addComponent(costPayNameLbl))
                 .addGap(20, 20, 20)
                 .addGroup(paymentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(paymentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(paymentFormLayout.createSequentialGroup()
-                            .addGap(140, 140, 140)
-                            .addComponent(paySaveBtn))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paymentFormLayout.createSequentialGroup()
-                            .addComponent(bookingTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                            .addGap(7, 7, 7)
-                            .addComponent(listBookingBtn)
-                            .addGap(46, 46, 46)))
                     .addComponent(costPayNameTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(payDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(paymentFormLayout.createSequentialGroup()
-                        .addComponent(totalPayTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(calculatePaymentBtn)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                    .addComponent(totalPayTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bookingTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paymentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(calculatePaymentBtn)
+                    .addComponent(listBookingBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(costImageViewer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addGroup(paymentFormLayout.createSequentialGroup()
+                .addGap(240, 240, 240)
+                .addComponent(paySaveBtn)
+                .addGap(367, 367, 367))
         );
         paymentFormLayout.setVerticalGroup(
             paymentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -578,136 +458,6 @@ public class Menu extends javax.swing.JFrame {
 
         hotelTabbedPane.addTab("Booking List", bookingListPnl);
 
-        paymentListTbl.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Booking ID", "Costumer Name", "Booking Date", "Payment Date"
-            }
-        ));
-        paymentListTbl.setEnabled(false);
-        paymentListScroll.setViewportView(paymentListTbl);
-        if (paymentListTbl.getColumnModel().getColumnCount() > 0) {
-            paymentListTbl.getColumnModel().getColumn(0).setPreferredWidth(15);
-            paymentListTbl.getColumnModel().getColumn(1).setPreferredWidth(25);
-            paymentListTbl.getColumnModel().getColumn(2).setResizable(false);
-            paymentListTbl.getColumnModel().getColumn(2).setPreferredWidth(25);
-            paymentListTbl.getColumnModel().getColumn(3).setResizable(false);
-            paymentListTbl.getColumnModel().getColumn(3).setPreferredWidth(25);
-        }
-
-        javax.swing.GroupLayout paymentListPnlLayout = new javax.swing.GroupLayout(paymentListPnl);
-        paymentListPnl.setLayout(paymentListPnlLayout);
-        paymentListPnlLayout.setHorizontalGroup(
-            paymentListPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(paymentListPnlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(paymentListScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        paymentListPnlLayout.setVerticalGroup(
-            paymentListPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(paymentListPnlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(paymentListScroll)
-                .addGap(27, 27, 27))
-        );
-
-        hotelTabbedPane.addTab("Payment List", paymentListPnl);
-
-        costumerListTbl.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Name", "Address", "Contact", "Email", "Gender", "Payment Status"
-            }
-        ));
-        costumerListTbl.setEnabled(false);
-        costumerListScroll.setViewportView(costumerListTbl);
-
-        javax.swing.GroupLayout costumerListPnlLayout = new javax.swing.GroupLayout(costumerListPnl);
-        costumerListPnl.setLayout(costumerListPnlLayout);
-        costumerListPnlLayout.setHorizontalGroup(
-            costumerListPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(costumerListPnlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(costumerListScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        costumerListPnlLayout.setVerticalGroup(
-            costumerListPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(costumerListPnlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(costumerListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
-        );
-
-        hotelTabbedPane.addTab("Costumer List", costumerListPnl);
-
-        roomListTbl.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "No.", "Room Type", "Status", "Price", "Facilities"
-            }
-        ));
-        roomListTbl.setEnabled(false);
-        roomListScroll.setViewportView(roomListTbl);
-
-        javax.swing.GroupLayout roomListPnlLayout = new javax.swing.GroupLayout(roomListPnl);
-        roomListPnl.setLayout(roomListPnlLayout);
-        roomListPnlLayout.setHorizontalGroup(
-            roomListPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roomListPnlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(roomListScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        roomListPnlLayout.setVerticalGroup(
-            roomListPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roomListPnlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(roomListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
-        );
-
-        hotelTabbedPane.addTab("Room List", roomListPnl);
-
-        userListTbl.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(userListTbl);
-
-        javax.swing.GroupLayout userManPnlLayout = new javax.swing.GroupLayout(userManPnl);
-        userManPnl.setLayout(userManPnlLayout);
-        userManPnlLayout.setHorizontalGroup(
-            userManPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(userManPnlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        userManPnlLayout.setVerticalGroup(
-            userManPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(userManPnlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
-        );
-
-        hotelTabbedPane.addTab("User List", userManPnl);
-
         getContentPane().add(hotelTabbedPane);
 
         fileMenu.setText("File");
@@ -721,11 +471,6 @@ public class Menu extends javax.swing.JFrame {
         fileMenu.add(logoutMenuItem);
 
         changePassMenuItem.setText("Change Password");
-        changePassMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changePassMenuItemActionPerformed(evt);
-            }
-        });
         fileMenu.add(changePassMenuItem);
 
         exitMenuItem.setText("Exit");
@@ -741,34 +486,9 @@ public class Menu extends javax.swing.JFrame {
         editMenu.setText("Edit");
 
         clearAllTextMenuItem.setText("Clear All Text");
-        clearAllTextMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearAllTextMenuItemActionPerformed(evt);
-            }
-        });
         editMenu.add(clearAllTextMenuItem);
 
         hotelMenuBar.add(editMenu);
-
-        managementMenu.setText("Management");
-
-        registerUserItem.setText("Register User");
-        registerUserItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                registerUserItemActionPerformed(evt);
-            }
-        });
-        managementMenu.add(registerUserItem);
-
-        manageRoomItem.setText("Manage Room");
-        manageRoomItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                manageRoomItemActionPerformed(evt);
-            }
-        });
-        managementMenu.add(manageRoomItem);
-
-        hotelMenuBar.add(managementMenu);
 
         helpMenu.setText("Help");
 
@@ -800,168 +520,29 @@ public class Menu extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_logoutMenuItemActionPerformed
 
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+       
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
+
     private void hotelTabbedPaneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hotelTabbedPaneMouseClicked
         // TODO add your handling code here:
-        try {
-            costumerListTbl.setModel(costumer.updateCostumerList());
-            paymentListTbl.setModel(payment.updatePaymentList());
-            bookingListTbl.setModel(booking.updateBookingList());
-            roomListTbl.setModel(room.updateRoomList());
-            userListTbl.setModel(account.updateAccountList());
-        } catch (SQLException ex) {
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }//GEN-LAST:event_hotelTabbedPaneMouseClicked
 
-    private void bookingSaveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bookingSaveBtnActionPerformed
-        // TODO add your handling code here:
-        String costumerName = costBookNameTxtField.getText();
-        String jenisKelamin = genderComBox.getSelectedItem().toString();
-        String costumerAddress = addressTxtArea.getText();
-        String contactNo = contactTxtField.getText();
-        String email = emailTxtField.getText();
-        String roomNo = roomNoTxtField.getText();
-        Date checkinDate = checkInDatePicker.getDate();
-        Date checkoutDate = checkOutDatePicker.getDate();
-
-        // Checking empty and whitespace
-        Vector<String> variableCheckStr = new Vector<String>();
-        Vector<Date> variableCheckDate = new Vector<Date>();
-        variableCheckStr.add(costumerName);
-        variableCheckStr.add(jenisKelamin);
-        variableCheckStr.add(costumerAddress);
-        variableCheckStr.add(contactNo);
-        variableCheckStr.add(email);
-        variableCheckStr.add(roomNo);
-        variableCheckDate.add(checkinDate);
-        variableCheckDate.add(checkoutDate);
-        boolean strOk = true;
-        for (String data : variableCheckStr) {
-            if (data == "" || data.matches("^\\s*$")) {
-                strOk = false;
-            }
-        }
-        for (Date data : variableCheckDate) {
-            if (data == null) {
-                strOk = false;
-            }
-        }
-
-        // If not empty and white space add to database
-        if (strOk) {
-            if (room.checkRoom(roomNo)) {
-                costumer.addCostumer(costumerName, costumerAddress, contactNo, email, jenisKelamin);
-                booking.addBooking(account.getEmployeeNo(), roomNo, costumer.getCostumerID(costumerName), checkinDate, checkoutDate);
-            } else {
-                JOptionPane.showMessageDialog(rootPane, "Please use empty room!!!");
-            }
-        }
-    }//GEN-LAST:event_bookingSaveBtnActionPerformed
-
     private void listEmptyRoomBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listEmptyRoomBtnActionPerformed
-        JTable emptyRoomTbl = new JTable(room.viewEmptyRoom());
-        emptyRoomTbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        JOptionPane.showMessageDialog(this, new JScrollPane(emptyRoomTbl));
 
     }//GEN-LAST:event_listEmptyRoomBtnActionPerformed
 
-    private void paySaveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paySaveBtnActionPerformed
+    private void bookingSaveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bookingSaveBtnActionPerformed
         // TODO add your handling code here:
-        String costumerName = costPayNameTxtField.getText();
-        String bookingID = bookingTxtField.getText();
-        double totalPayment = 0;
-        Date paymentDate = payDatePicker.getDate();
 
-        // Checking empty and whitespace
-        Vector<String> variableCheckStr = new Vector<String>();
-        variableCheckStr.add(costumerName);
-        variableCheckStr.add(bookingID);
-        boolean strOk = true;
-        if (paymentDate == null) {
-            strOk = false;
-        }
-        if (totalPayTxtField.getText() == "" || totalPayTxtField.getText().matches("^\\s*$")) {
-            strOk = false;
-        } else {
-            totalPayment = Double.parseDouble(totalPayTxtField.getText());
-        }
-        for (String data : variableCheckStr) {
-            if (data == "" || data.matches("^\\s*$")) {
-                strOk = false;
-            }
-        }
+    }//GEN-LAST:event_bookingSaveBtnActionPerformed
 
-        // If not empty and white space add to database
-        if (strOk) {
-            if (costumer.checkCostumer(costumerName)) {
-                payment.addPayment(costumer.getCostumerID(costumerName), bookingID, account.getEmployeeNo(), totalPayment, paymentDate);
-            } else {
-                JOptionPane.showMessageDialog(rootPane, "Costumer Not Found!!!");
-            }
-        }
-    }//GEN-LAST:event_paySaveBtnActionPerformed
-
-    private void listBookingBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listBookingBtnActionPerformed
-        JTable bookingListTbl = new JTable(booking.viewBooking());
-        bookingListTbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        JOptionPane.showMessageDialog(this, new JScrollPane(bookingListTbl));
-    }//GEN-LAST:event_listBookingBtnActionPerformed
-
-    private void changePassMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changePassMenuItemActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        ChangePassword changePassword = new ChangePassword(null, true);
-        changePassword.setLocationRelativeTo(this);
-        changePassword.setVisible(true);
-    }//GEN-LAST:event_changePassMenuItemActionPerformed
-
-    private void registerUserItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerUserItemActionPerformed
-        // TODO add your handling code here:
-        RegisterUser registerUser = new RegisterUser(null, true);
-        registerUser.setLocationRelativeTo(this);
-        registerUser.setVisible(true);
-    }//GEN-LAST:event_registerUserItemActionPerformed
-
-    private void manageRoomItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageRoomItemActionPerformed
-        // TODO add your handling code here:
-        ManageRoom manageRoom = new ManageRoom(null, true);
-        manageRoom.setLocationRelativeTo(this);
-        manageRoom.setVisible(true);
-    }//GEN-LAST:event_manageRoomItemActionPerformed
-
-    private void clearAllTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearAllTextMenuItemActionPerformed
-        // TODO add your handling code here:
-        costBookNameTxtField.setText("");
-        addressTxtArea.setText("");
-        contactTxtField.setText("");
-        contactTxtField.setText("");
-        emailTxtField.setText("");
-        roomNoTxtField.setText("");
-        checkInDatePicker.setDate(null);
-        checkOutDatePicker.setDate(null);
-        costPayNameTxtField.setText("");
-        bookingTxtField.setText("");
-        totalPayTxtField.setText("");
-    }//GEN-LAST:event_clearAllTextMenuItemActionPerformed
-
-    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        // TODO add your handling code here:
-        JOptionPane.showMessageDialog(null, "To be add: \n- Jasper report. \n- Formatted input. \n- Row not aligned center.");
-    }//GEN-LAST:event_aboutMenuItemActionPerformed
-
-    private void calculatePaymentBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calculatePaymentBtnActionPerformed
-        // TODO add your handling code here:
-        double totalPayment = 0;
-        double price = room.getRoomPrice(String.valueOf(booking.getRoomNo(bookingTxtField.getText())));
-        int day = booking.getStayDuration(bookingTxtField.getText());
-        totalPayment = price * day;
-        totalPayTxtField.setText(String.valueOf(totalPayment));
-    }//GEN-LAST:event_calculatePaymentBtnActionPerformed
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     private Account account;
-    private Booking booking;
-    private Payment payment;
-    private Costumer costumer;
-    private Room room;
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JLabel addressLbl;
@@ -988,9 +569,6 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JPanel costImageViewer;
     private javax.swing.JLabel costPayNameLbl;
     private javax.swing.JFormattedTextField costPayNameTxtField;
-    private javax.swing.JPanel costumerListPnl;
-    private javax.swing.JScrollPane costumerListScroll;
-    private javax.swing.JTable costumerListTbl;
     private javax.swing.JMenu editMenu;
     private javax.swing.JLabel emailLbl;
     private javax.swing.JFormattedTextField emailTxtField;
@@ -1007,31 +585,19 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton listBookingBtn;
     private javax.swing.JButton listEmptyRoomBtn;
     private javax.swing.JMenuItem logoutMenuItem;
-    private javax.swing.JMenuItem manageRoomItem;
-    private javax.swing.JMenu managementMenu;
     private javax.swing.JLabel payDateLbl;
     private org.jdesktop.swingx.JXDatePicker payDatePicker;
     private javax.swing.JButton paySaveBtn;
     private javax.swing.JPanel paymentForm;
-    private javax.swing.JPanel paymentListPnl;
-    private javax.swing.JScrollPane paymentListScroll;
-    private javax.swing.JTable paymentListTbl;
     private javax.swing.JPanel paymentPnl;
-    private javax.swing.JMenuItem registerUserItem;
     private javax.swing.JLabel roomLbl;
-    private javax.swing.JPanel roomListPnl;
-    private javax.swing.JScrollPane roomListScroll;
-    private javax.swing.JTable roomListTbl;
     private javax.swing.JPanel roomNoLbl;
     private javax.swing.JTextField roomNoTxtField;
     private javax.swing.JTextField roomNoTxtField1;
     private javax.swing.JFormattedTextField totalPayTxtField;
     private javax.swing.JLabel totalPaymentLbl;
-    private javax.swing.JTable userListTbl;
-    private javax.swing.JPanel userManPnl;
     // End of variables declaration//GEN-END:variables
 }

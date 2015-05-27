@@ -184,9 +184,10 @@ public class Login extends javax.swing.JDialog {
         loginStatus = account.authentication(this.usernameText.getText(), new String(this.passwordText.getPassword()));
         if (loginStatus) {
             this.toBack();
-            /*Menu userMenu = new Menu(this.getLocation());
+            Menu userMenu = new Menu();
+            userMenu.setLocationRelativeTo(this);
             userMenu.setVisible(true);
-            userMenu.toFront();*/
+            userMenu.toFront();
             this.dispose();
         } else {
             JOptionPane.showMessageDialog(rootPane, "Login failed!!!");
